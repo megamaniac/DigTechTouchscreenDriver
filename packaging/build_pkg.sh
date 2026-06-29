@@ -104,31 +104,12 @@ chmod 755 "$SCRIPTS_DIR/postinstall"
 
 # Create Distribution XML (installer customization)
 echo "📝 Creating distribution configuration..."
-cat > "$PKG_BUILD_DIR/distribution.xml" << 'EOF'
+cat > "$PKG_BUILD_DIR/distribution.xml" << 'XMLEOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <installer-gui-script minSpecVersion="1">
     <title>Dig.Tech Touchscreen Driver</title>
     <organization identifier="com.digtech"/>
     <domains enable_localSystem="true"/>
-    
-    <installation-check script="installCheck()"/>
-    
-    <volume-check script="volumeCheck()"/>
-    
-    <script>
-        function installCheck() {
-            if(system.compareVersions(system.version.ProductVersion, '10.15') < 0) {
-                my.result.title = 'Unable to Install';
-                my.result.message = 'Dig.Tech Touchscreen Driver requires macOS 10.15 (Catalina) or later.';
-                my.result.type = 'Fatal';
-                return false;
-            }
-            return true;
-        }
-        function volumeCheck() {
-            return true;
-        }
-    </script>
     
     <pkg-ref id="com.digtech.touchscreendriver.pkg" onConclusion="none">DigTechTouchscreenDriver.pkg</pkg-ref>
     
@@ -144,9 +125,8 @@ cat > "$PKG_BUILD_DIR/distribution.xml" << 'EOF'
         <pkg-ref id="com.digtech.touchscreendriver.pkg"/>
     </choice>
     
-    <conclusion/>
 </installer-gui-script>
-EOF
+XMLEOF
 
 # Build the component package
 echo "🔧 Building component package..."
