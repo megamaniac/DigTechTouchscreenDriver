@@ -1,9 +1,8 @@
 name: Build and Release macOS Installer
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'  # Trigger on version tags like v1.0.0
+  release:
+    types: [published, created]
 
 jobs:
   build:
