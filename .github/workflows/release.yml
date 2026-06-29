@@ -1,11 +1,8 @@
 name: Build and Release macOS Installer
 
 on:
-  workflow_dispatch:
-  push:
-    tags:
-      - 'v*'
-      - 'V*'
+  release:
+    types: [published, created]
 
 jobs:
   build:
@@ -14,8 +11,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       
       - name: Build macOS Installer Package
         run: |
@@ -23,9 +18,47 @@ jobs:
           chmod +x build_pkg.sh
           ./build_pkg.sh
       
-      - name: Upload PKG to Release
+      - name: List build directory
+        run: ls -la build/
+      
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: packaging/build/DigTechTouchscreenDriver-*.pkg
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            build/DigTechTouchscreenDriver-*.pkg
+          body: |
+            # Dig.Tech Touchscreen Driver v${{ steps.version.outputs.VERSION }}
+            
+            ## Installation
+            
+            1. Download `DigTechTouchscreenDriver-${{ steps.version.outputs.VERSION }}.pkg`
+            2. Double-click the file to open the installer
+            3. Follow the installation wizard
+            4. Enter your password when prompted
+            
+            ## Post-Installation Setup
+            
+            After installation, grant the required permissions:
+            
+            1. Open **System Settings** → **Privacy & Security**
+            2. Go to **Accessibility** and add Terminal (or the binary)
+            3. Go to **Input Monitoring** and add Terminal (or the binary)
+            4. Restart your Mac or the driver
+            
+            ## Using the Driver
+            
+            - **Check status**: `pgrep -f DigTechTouchscreenDriver && echo "Running" || echo "Stopped"`
+            - **View logs**: `tail -f /tmp/touchscreendriver.log`
+            - **Stop driver**: `launchctl unload /Library/LaunchAgents/com.ymlaine.touchscreendriver.plist`
+            - **Start driver**: `launchctl load /Library/LaunchAgents/com.ymlaine.touchscreendriver.plist`
+            
+            ## Uninstallation
+            
+            ```bash
+            launchctl unload /Library/LaunchAgents/com.ymlaine.touchscreendriver.plist
+            rm /usr/local/bin/DigTechTouchscreenDriver
+            rm /Library/LaunchAgents/com.ymlaine.touchscreendriver.plist
+            rm -rf /usr/local/share/doc/digtech-touchscreen-driver/
+            ```
+            
+            For full installation details, see [INSTALLATION.md](https://github.com/megamaniac/DigTechTouchscreenDriver/blob/main/INSTALLATION.md).
