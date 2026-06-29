@@ -1,8 +1,11 @@
 name: Build and Release macOS Installer
 
 on:
-  release:
-    types: [published, created]
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+      - 'V*'
 
 jobs:
   build:
