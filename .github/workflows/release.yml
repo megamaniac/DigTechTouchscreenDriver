@@ -26,6 +26,6 @@ jobs:
       - name: Upload PKG to Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build/DigTechTouchscreenDriver-*.pkg
+          files: packaging/build/DigTechTouchscreenDriver-*.pkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
