@@ -5,6 +5,7 @@ on:
   push:
     tags:
       - 'v*'
+      - 'V*'
 
 jobs:
   build:
@@ -25,6 +26,6 @@ jobs:
       - name: Upload PKG to Release
         uses: softprops/action-gh-release@v1
         with:
-          files: packaging/build/DigTechTouchscreenDriver-*.pkg
+          files: build/DigTechTouchscreenDriver-*.pkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
